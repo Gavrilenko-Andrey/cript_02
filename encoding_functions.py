@@ -15,7 +15,7 @@ def create_encoded_words(encoded_words: dict, filename: str, raw_probabilities=N
         raise ValueError("You set the wrong amount of probabilities in your file. Please, check it.")
     for i in range(len(probability)):
         probability[i] = decimal.Decimal(float(probability[i]))
-        # print(probability[i])
+        print(probability[i])
         if probability[i] < 0:
             raise ValueError("One of the probabilities was less than 0. Please, check it.")
     if sum(probability) <= 1 - eps or sum(probability) >= 1 + eps:
