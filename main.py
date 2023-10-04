@@ -26,15 +26,22 @@ file_output_decode_sequence = "decode_sequence_output.txt"
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.encoded_words = {"A": "", "B": "", "C": "", "D": "", "E": "", "F": "", "1": "", "2": "", }
+        self.file_input_encode_probabilities = "encode_input.txt"
+        self.file_input_encode_sequence = "encode_sequence_input.txt"
+        self.file_output_encode_sequence = "encode_sequence_output.txt"
+        self.file_input_decode_sequence = "decode_sequence_input.txt"
+        self.file_output_decode_sequence = "decode_sequence_output.txt"
         self.setStyleSheet('background-color: #FFFAAA')
         self.setWindowTitle("Код Хаффмана")
         self.setFixedSize(QSize(1360, 766))
 
         error = 1
         try:
-            create_encoded_words(encoded_words, file_input_encode_probabilities)
+            create_encoded_words(self.encoded_words, self.file_input_encode_probabilities)
+            print(self.encoded_words)
         except FileNotFoundError:
-            label = QLabel(f"There is no file named {file_input_encode_probabilities} in the static directory, \
+            label = QLabel(f"There is no file named {self.file_input_encode_probabilities} in the static directory, \
 please make sure you have created the file and set the right name.")
             #sys.exit()
         except ValueError as content:
@@ -62,6 +69,7 @@ please make sure you have created the file and set the right name.")
         font.setPixelSize(24)
         button_get_parameters.setFont(font)
         button_get_parameters.setFixedSize(300, 150)
+        button_get_parameters.clicked.connect(self.change_widget_to_params)
 
         button_return_main_from_files = QPushButton(text="Назад")
         font = button_return_main_from_files.font()
@@ -89,36 +97,42 @@ please make sure you have created the file and set the right name.")
         font.setPixelSize(24)
         button_files_encode.setFont(font)
         button_files_encode.setFixedSize(450, 300)
+        button_files_encode.clicked.connect(self.change_widget_to_files_encode)
 
         button_files_decode = QPushButton(text="Декодировать")
         font = button_files_decode.font()
         font.setPixelSize(24)
         button_files_decode.setFont(font)
         button_files_decode.setFixedSize(450, 300)
+        button_files_decode.clicked.connect(self.change_widget_to_files_decode)
 
-        button_files_encode_activate = QPushButton(text="Кодировать")
+        button_files_encode_activate = QPushButton(text="Кодировать и записать в файл")
         font = button_files_encode_activate.font()
         font.setPixelSize(24)
         button_files_encode_activate.setFont(font)
-        button_files_encode_activate.setFixedSize(300, 150)
+        button_files_encode_activate.setFixedSize(450, 300)
+        button_files_encode_activate.clicked.connect(self.activate_files_encode)
 
-        button_files_decode_activate = QPushButton(text="Декодировать")
+        button_files_decode_activate = QPushButton(text="Декодировать и записать в файл")
         font = button_files_decode_activate.font()
         font.setPixelSize(24)
         button_files_decode_activate.setFont(font)
-        button_files_decode_activate.setFixedSize(300, 150)
+        button_files_decode_activate.setFixedSize(450, 300)
+        button_files_decode_activate.clicked.connect(self.activate_files_decode)
 
         button_files_return_from_encode = QPushButton(text="Назад")
         font = button_files_return_from_encode.font()
         font.setPixelSize(24)
         button_files_return_from_encode.setFont(font)
         button_files_return_from_encode.setFixedSize(100, 50)
+        button_files_return_from_encode.clicked.connect(self.change_widget_to_files)
 
         button_files_return_from_decode = QPushButton(text="Назад")
         font = button_files_return_from_decode.font()
         font.setPixelSize(24)
         button_files_return_from_decode.setFont(font)
         button_files_return_from_decode.setFixedSize(100, 50)
+        button_files_return_from_decode.clicked.connect(self.change_widget_to_files)
 
         button_writing_encode = QPushButton(text="Кодировать")
         font = button_writing_encode.font()
@@ -161,25 +175,6 @@ please make sure you have created the file and set the right name.")
         self.begin_layout.addWidget(button_work_with_writing, 1, 2)
         self.begin_layout.addWidget(button_get_parameters, 2, 1)
 
-        self.files_layout = QGridLayout()
-        self.files_layout.addWidget(button_return_main_from_files, 0, 0)
-        self.files_layout.addWidget(button_files_encode, 1, 0)
-        self.files_layout.addWidget(button_files_decode, 1, 1)
-
-        self.files_widget = QWidget()
-        self.files_widget.setLayout(self.files_layout)
-
-        self.writing_layout = QGridLayout()
-        self.writing_layout.addWidget(button_return_main_from_writing, 0, 0,
-                                      alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        self.writing_layout.addWidget(button_writing_encode, 1, 20, 1, 30)
-        self.writing_layout.addWidget(button_writing_decode, 1, 60, 1, 23)
-
-        self.writing_widget = QWidget()
-        self.writing_widget.setLayout(self.writing_layout)
-
-        params_layout = QGridLayout()
-
         self.main_widget = QWidget()
 
         if error:
@@ -196,6 +191,95 @@ please make sure you have created the file and set the right name.")
         else:
             self.main_widget.setLayout(self.begin_layout)
 
+        self.files_layout = QGridLayout()
+        self.files_layout.addWidget(button_return_main_from_files, 0, 0,
+                                    alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.files_layout.addWidget(button_files_encode, 1, 20, 1, 30)
+        self.files_layout.addWidget(button_files_decode, 1, 60, 1, 23)
+
+        self.files_widget = QWidget()
+        self.files_widget.setLayout(self.files_layout)
+
+        self.files_encode_layout = QGridLayout()
+        label1 = QLabel("")
+        font = label1.font()
+        font.setPixelSize(24)
+        label1.setFont(font)
+        label1.setWordWrap(True)
+        label2 = QLabel("")
+        font = label2.font()
+        font.setPixelSize(24)
+        label2.setFont(font)
+        label2.setWordWrap(True)
+        self.files_encode_layout.addWidget(button_files_return_from_encode, 0, 0,
+                                           alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.files_encode_layout.addWidget(label1, 1, 0, 1, 50)
+        self.files_encode_layout.addWidget(label2, 1, 51, 1, 100)
+        self.files_encode_layout.addWidget(button_files_encode_activate, 2, 49)
+
+        self.files_encode_widget = QWidget()
+        self.files_encode_widget.setLayout(self.files_encode_layout)
+
+        self.files_decode_layout = QGridLayout()
+        label1 = QLabel("")
+        font = label1.font()
+        font.setPixelSize(24)
+        label1.setFont(font)
+        label1.setWordWrap(True)
+        label2 = QLabel("")
+        font = label2.font()
+        font.setPixelSize(24)
+        label2.setFont(font)
+        label2.setWordWrap(True)
+
+        self.files_decode_layout.addWidget(button_files_return_from_decode, 0, 0,
+                                           alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.files_decode_layout.addWidget(label1, 1, 0, 1, 50)
+        self.files_decode_layout.addWidget(label2, 1, 51, 1, 100)
+        self.files_decode_layout.addWidget(button_files_decode_activate, 2, 49)
+
+        self.files_decode_widget = QWidget()
+        self.files_decode_widget.setLayout(self.files_decode_layout)
+
+        self.writing_layout = QGridLayout()
+        self.writing_layout.addWidget(button_return_main_from_writing, 0, 0,
+                                      alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.writing_layout.addWidget(button_writing_encode, 1, 20, 1, 30)
+        self.writing_layout.addWidget(button_writing_decode, 1, 60, 1, 23)
+
+        self.writing_widget = QWidget()
+        self.writing_widget.setLayout(self.writing_layout)
+
+        self.params_layout = QGridLayout()
+        self.params_widget = QWidget()
+        if not error:
+            self.parameters = get_parameters(self.encoded_words, self.file_input_encode_probabilities)
+            label_params_average_length = QLabel(f"Средняя длина кодовых слов равна {self.parameters[0]:.6f}")
+            font = label_params_average_length.font()
+            font.setPixelSize(24)
+            label_params_average_length.setFont(font)
+            label_params_redundancy = QLabel(f"Избыточность равна {self.parameters[1]:.6f}")
+            font = label_params_redundancy.font()
+            font.setPixelSize(24)
+            label_params_redundancy.setFont(font)
+            if self.parameters[2][0]:
+                check_kraft = "выполняется"
+            else:
+                check_kraft = "не выполняется"
+            label_params_kraft_inequality = QLabel(f"Неравенство Крафта {check_kraft}. Левая часть равна \
+{self.parameters[2][1]:.6f}")
+            font = label_params_kraft_inequality.font()
+            font.setPixelSize(24)
+            label_params_kraft_inequality.setFont(font)
+            self.params_layout.addWidget(button_return_main_from_parameters, 0, 0,
+                                         alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+            self.params_layout.addWidget(label_params_average_length, 1, 10, 1, 100)
+            self.params_layout.addWidget(label_params_redundancy, 2, 10, 1, 100)
+            self.params_layout.addWidget(label_params_kraft_inequality, 3, 10, 1, 100)
+            # print(self.parameters)
+
+        self.params_widget.setLayout(self.params_layout)
+
         self.setMinimumSize(self.sizeHint())
 
         self.stacked = QStackedWidget()
@@ -203,9 +287,15 @@ please make sure you have created the file and set the right name.")
         self.stacked.addWidget(self.main_widget)
         self.stacked.addWidget(self.writing_widget)
         self.stacked.addWidget(self.files_widget)
+        self.stacked.addWidget(self.params_widget)
+        self.stacked.addWidget(self.files_encode_widget)
+        self.stacked.addWidget(self.files_decode_widget)
         self.stacked.setCurrentWidget(self.main_widget)
         # self.setCentralWidget(self.main_widget)
         # self.stacked.setCurrentWidget(self.main_widget)
+
+        self.encoded_sequence = ""
+        self.decoded_sequence = ""
 
     def change_widget_to_files(self):
         self.stacked.setCurrentWidget(self.files_widget)
@@ -219,6 +309,76 @@ please make sure you have created the file and set the right name.")
     def change_widget_to_main(self):
         #pass
         self.stacked.setCurrentWidget(self.main_widget)
+
+    def change_widget_to_params(self):
+        self.stacked.setCurrentWidget(self.params_widget)
+        # self.stacked.currentWidget().layout().itemAt(2).widget().setText("")
+
+    def change_widget_to_files_encode(self):
+        self.stacked.setCurrentWidget(self.files_encode_widget)
+        self.stacked.currentWidget().layout().itemAt(1).widget().setText("")
+        self.stacked.currentWidget().layout().itemAt(2).widget().setText("")
+        self.stacked.currentWidget().layout().itemAt(3).widget().setEnabled(False)
+        try:
+            self.encoded_sequence = make_encoded_string(self.encoded_words, self.file_input_encode_sequence)
+        except FileNotFoundError:
+            content = f"There is no file named {self.file_input_encode_sequence} in the static directory. \
+Please make sure you have created the file and set the right name."
+            self.stacked.currentWidget().layout().itemAt(1).widget().setText(content)
+            #print(content)
+        except ValueError as content:
+            content = content.args[0]
+            self.stacked.currentWidget().layout().itemAt(1).widget().setText(content)
+        else:
+            with open(f'./static/{self.file_input_encode_sequence}') as input_string_file:
+                sequence = input_string_file.read()
+            content = "Текущая последовательность в файле: " + sequence
+            self.stacked.currentWidget().layout().itemAt(3).widget().setEnabled(True)
+            self.stacked.currentWidget().layout().itemAt(1).widget().setText(content)
+
+    def activate_files_encode(self):
+        try:
+            write_encoded_string_in_file(self.encoded_sequence, self.file_output_encode_sequence)
+        except FileNotFoundError:
+            content = f"There is no file named {self.file_output_encode_sequence} in the static directory, \
+please make sure you have created the file and set the right name."
+            self.stacked.currentWidget().layout().itemAt(2).widget().setText(content)
+        else:
+            self.stacked.currentWidget().layout().itemAt(2).widget().setText("Закодированная последовательность: " +
+                                                                             self.encoded_sequence)
+
+    def change_widget_to_files_decode(self):
+        self.stacked.setCurrentWidget(self.files_decode_widget)
+        self.stacked.currentWidget().layout().itemAt(1).widget().setText("")
+        self.stacked.currentWidget().layout().itemAt(2).widget().setText("")
+        self.stacked.currentWidget().layout().itemAt(3).widget().setEnabled(False)
+        try:
+            self.decoded_sequence = make_decoded_string(self.encoded_words, self.file_input_decode_sequence)
+        except FileNotFoundError:
+            content = f"There is no file named {self.file_input_decode_sequence} in the static directory. \
+Please make sure you have created the file and set the right name."
+            self.stacked.currentWidget().layout().itemAt(1).widget().setText(content)
+            # print(content)
+        except ValueError as content:
+            content = content.args[0]
+            self.stacked.currentWidget().layout().itemAt(1).widget().setText(content)
+        else:
+            with open(f'./static/{self.file_input_decode_sequence}') as input_string_file:
+                sequence = input_string_file.read()
+            content = "Текущая последовательность в файле: " + sequence
+            self.stacked.currentWidget().layout().itemAt(3).widget().setEnabled(True)
+            self.stacked.currentWidget().layout().itemAt(1).widget().setText(content)
+
+    def activate_files_decode(self):
+        try:
+            write_decoded_string_in_file(self.decoded_sequence, self.file_output_decode_sequence)
+        except FileNotFoundError:
+            content = f"There is no file named {self.file_output_decode_sequence} in the static directory, \
+please make sure you have created the file and set the right name."
+            self.stacked.currentWidget().layout().itemAt(2).widget().setText(content)
+        else:
+            self.stacked.currentWidget().layout().itemAt(2).widget().setText("Декодированная последовательность: " +
+                                                                             self.decoded_sequence)
 
 
 if __name__ == '__main__':

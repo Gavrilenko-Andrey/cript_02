@@ -20,7 +20,7 @@ Please, check it.")
                 decoded_sequence += decoded_words[word]
                 break
         else:
-            raise ValueError("There are unsupported sequences in your file. Message can't be decoded with the given\
+            raise ValueError("There are unsupported sequences in your file. Message can't be decoded with the given \
 alphabet. Please, check it.")
 
     # decoded_sequence = encoded_sequence.translate(encoded_sequence.maketrans(decoded_words))

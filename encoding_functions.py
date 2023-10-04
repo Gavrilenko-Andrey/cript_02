@@ -56,8 +56,8 @@ def make_encoded_string(encoded_words: dict, filename: str, raw_sequence="") -> 
         sequence = raw_sequence
     for elem in sequence:
         if elem not in encoded_words:
-            raise ValueError("""Your sequence consists of symbols that are not present in the alphabet. 
-Please, check it.""")
+            raise ValueError("Your sequence consists of symbols that are not present in the alphabet. \
+Please, check it.")
     return sequence.translate(sequence.maketrans(encoded_words))
 
 
@@ -110,6 +110,7 @@ def get_redundancy(filename: str, raw_probabilities=None) -> float:  # Подр�
 
 
 def check_kraft_inequality(encoded_words: dict) -> list:
+    decimal.getcontext().prec = 6
     left_part_of_kraft_inequality = 0
     left_part_of_kraft_inequality = decimal.Decimal(left_part_of_kraft_inequality)
     for elem in list(encoded_words.values()):
