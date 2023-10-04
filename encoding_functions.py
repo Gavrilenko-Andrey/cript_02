@@ -14,8 +14,12 @@ def create_encoded_words(encoded_words: dict, filename: str, raw_probabilities=N
     if len(probability) != len(encoded_words):
         raise ValueError("You set the wrong amount of probabilities in your file. Please, check it.")
     for i in range(len(probability)):
-        probability[i] = decimal.Decimal(float(probability[i]))
-        print(probability[i])
+        try:
+            probability[i] = decimal.Decimal(float(probability[i]))
+        except ValueError:
+            raise ValueError(f"At least one of your probabilities ({i+1}th) is not a float number. \
+Please, check it.")
+        # print(probability[i])
         if probability[i] < 0:
             raise ValueError("One of the probabilities was less than 0. Please, check it.")
     if sum(probability) <= 1 - eps or sum(probability) >= 1 + eps:
