@@ -47,7 +47,9 @@ Please, check it.")
     # print(encoded_words)
 
 
-def make_encoded_string(encoded_words: dict, filename: str, raw_sequence="") -> str:
+def make_encoded_string(encoded_words: dict, filename: str, raw_sequence=None) -> str:
+    if raw_sequence == "":
+        return ""
     if not raw_sequence:
         with open(f'./static/{filename}') as input_string_file:
             sequence = input_string_file.read()
@@ -104,8 +106,8 @@ def get_redundancy(filename: str, raw_probabilities=None) -> float:  # Подр�
         # print(probability[i])
         now_entropy += probability[i] * log2(probability[i]) if probability[i] != 0 else 0
         max_entropy += probability_of_word_in_uniform_distribution * log2(probability_of_word_in_uniform_distribution)
-    print(f"now entropy: {now_entropy}, max entropy: {max_entropy}, average probability: \
-{probability_of_word_in_uniform_distribution}")
+    # print(f"now entropy: {now_entropy}, max entropy: {max_entropy}, average probability: \
+# {probability_of_word_in_uniform_distribution}")
     return 1 - now_entropy / max_entropy
 
 

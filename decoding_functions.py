@@ -1,7 +1,9 @@
 import re
 
 
-def make_decoded_string(encoded_words: dict, filename: str, raw_sequence="") -> str:
+def make_decoded_string(encoded_words: dict, filename: str, raw_sequence=None) -> str:
+    if raw_sequence == "":
+        return ""
     decoded_words = {word: letter for letter, word in encoded_words.items()}
     if not raw_sequence:
         with open(f"./static/{filename}") as input_encoded_string_file:
@@ -24,8 +26,8 @@ Please, check it.")
 alphabet. Please, check it.")
 
     # decoded_sequence = encoded_sequence.translate(encoded_sequence.maketrans(decoded_words))
-    print(f'decoded sequence: {decoded_sequence}, decoded words:\n{decoded_words},\nencoded sequence:\
-{encoded_sequence}')
+    # print(f'decoded sequence: {decoded_sequence}, decoded words:\n{decoded_words},\nencoded sequence:\
+# {encoded_sequence}')
 
 #         if re.search('[01]', decoded_sequence):
 #             raise ValueError("There are unsupported sequences in your file. Message can't be decoded with the given \

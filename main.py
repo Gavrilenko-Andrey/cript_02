@@ -8,19 +8,20 @@ from PyQt6.QtWidgets import (QWidget,
                              QGridLayout,
                              QVBoxLayout,
                              QStackedWidget,
+                             QLineEdit,
                              )
 
 from encoding_functions import create_encoded_words, make_encoded_string, write_encoded_string_in_file, get_parameters
 from decoding_functions import make_decoded_string, write_decoded_string_in_file
 
 
-encoded_words = {"A": "", "B": "", "C": "", "D": "", "E": "", "F": "", "1": "", "2": "", }
-
-file_input_encode_probabilities = "encode_input.txt"
-file_input_encode_sequence = "encode_sequence_input.txt"
-file_output_encode_sequence = "encode_sequence_output.txt"
-file_input_decode_sequence = "decode_sequence_input.txt"
-file_output_decode_sequence = "decode_sequence_output.txt"
+# encoded_words = {"A": "", "B": "", "C": "", "D": "", "E": "", "F": "", "1": "", "2": "", }
+#
+# file_input_encode_probabilities = "encode_input.txt"
+# file_input_encode_sequence = "encode_sequence_input.txt"
+# file_output_encode_sequence = "encode_sequence_output.txt"
+# file_input_decode_sequence = "decode_sequence_input.txt"
+# file_output_decode_sequence = "decode_sequence_output.txt"
 
 
 class MainWindow(QMainWindow):
@@ -39,7 +40,7 @@ class MainWindow(QMainWindow):
         error = 1
         try:
             create_encoded_words(self.encoded_words, self.file_input_encode_probabilities)
-            print(self.encoded_words)
+            # print(self.encoded_words)
         except FileNotFoundError:
             label = QLabel(f"There is no file named {self.file_input_encode_probabilities} in the static directory, \
 please make sure you have created the file and set the right name.")
@@ -139,36 +140,42 @@ please make sure you have created the file and set the right name.")
         font.setPixelSize(24)
         button_writing_encode.setFont(font)
         button_writing_encode.setFixedSize(450, 300)
+        button_writing_encode.clicked.connect(self.change_widget_to_writing_encode)
 
         button_writing_decode = QPushButton(text="Декодировать")
         font = button_writing_decode.font()
         font.setPixelSize(24)
         button_writing_decode.setFont(font)
         button_writing_decode.setFixedSize(450, 300)
+        button_writing_decode.clicked.connect(self.change_widget_to_writing_decode)
 
         button_writing_encode_activate = QPushButton(text="Кодировать")
         font = button_writing_encode_activate.font()
         font.setPixelSize(24)
         button_writing_encode_activate.setFont(font)
-        button_writing_encode_activate.setFixedSize(300, 150)
+        button_writing_encode_activate.setFixedSize(450, 300)
+        button_writing_encode_activate.clicked.connect(self.activate_writing_encode)
 
         button_writing_decode_activate = QPushButton(text="Декодировать")
         font = button_writing_decode_activate.font()
         font.setPixelSize(24)
         button_writing_decode_activate.setFont(font)
-        button_writing_decode_activate.setFixedSize(300, 150)
+        button_writing_decode_activate.setFixedSize(450, 300)
+        button_writing_decode_activate.clicked.connect(self.activate_writing_decode)
 
         button_writing_return_from_encode = QPushButton(text="Назад")
         font = button_writing_return_from_encode.font()
         font.setPixelSize(24)
         button_writing_return_from_encode.setFont(font)
         button_writing_return_from_encode.setFixedSize(100, 50)
+        button_writing_return_from_encode.clicked.connect(self.change_widget_to_writing)
 
         button_writing_return_from_decode = QPushButton(text="Назад")
         font = button_writing_return_from_decode.font()
         font.setPixelSize(24)
         button_writing_return_from_decode.setFont(font)
         button_writing_return_from_decode.setFixedSize(100, 50)
+        button_writing_return_from_decode.clicked.connect(self.change_widget_to_writing)
 
         self.begin_layout = QGridLayout()
         self.begin_layout.addWidget(button_work_with_files, 1, 0)
@@ -247,6 +254,66 @@ please make sure you have created the file and set the right name.")
         self.writing_layout.addWidget(button_writing_encode, 1, 20, 1, 30)
         self.writing_layout.addWidget(button_writing_decode, 1, 60, 1, 23)
 
+        self.writing_encode_layout = QGridLayout()
+        label1 = QLabel("Исходная последовательность")
+        font = label1.font()
+        font.setPixelSize(24)
+        label1.setFont(font)
+        label1.setWordWrap(True)
+        textarea1 = QLineEdit()
+        font = textarea1.font()
+        font.setPixelSize(24)
+        textarea1.setFont(font)
+        label2 = QLabel("Закодированная последовательность")
+        font = label2.font()
+        font.setPixelSize(24)
+        label2.setFont(font)
+        label2.setWordWrap(True)
+        textarea2 = QLineEdit()
+        font = textarea2.font()
+        font.setPixelSize(24)
+        textarea2.setFont(font)
+        self.writing_encode_layout.addWidget(button_writing_return_from_encode, 0, 0,
+                                             alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.writing_encode_layout.addWidget(label1, 1, 0, 1, 50)
+        self.writing_encode_layout.addWidget(label2, 1, 51, 1, 100)
+        self.writing_encode_layout.addWidget(textarea1, 2, 0, 5, 50)
+        self.writing_encode_layout.addWidget(textarea2, 2, 51, 5, 100)
+        self.writing_encode_layout.addWidget(button_writing_encode_activate, 6, 49, 8, 74)
+        
+        self.writing_encode_widget = QWidget()
+        self.writing_encode_widget.setLayout(self.writing_encode_layout)
+
+        self.writing_decode_layout = QGridLayout()
+        label1 = QLabel("Исходная последовательность")
+        font = label1.font()
+        font.setPixelSize(24)
+        label1.setFont(font)
+        label1.setWordWrap(True)
+        textarea1 = QLineEdit()
+        font = textarea1.font()
+        font.setPixelSize(24)
+        textarea1.setFont(font)
+        label2 = QLabel("Декодированная последовательность")
+        font = label2.font()
+        font.setPixelSize(24)
+        label2.setFont(font)
+        label2.setWordWrap(True)
+        textarea2 = QLineEdit()
+        font = textarea2.font()
+        font.setPixelSize(24)
+        textarea2.setFont(font)
+        self.writing_decode_layout.addWidget(button_writing_return_from_decode, 0, 0,
+                                             alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.writing_decode_layout.addWidget(label1, 1, 0, 1, 50)
+        self.writing_decode_layout.addWidget(label2, 1, 51, 1, 100)
+        self.writing_decode_layout.addWidget(textarea1, 2, 0, 5, 50)
+        self.writing_decode_layout.addWidget(textarea2, 2, 51, 5, 100)
+        self.writing_decode_layout.addWidget(button_writing_decode_activate, 6, 49, 8, 74)
+
+        self.writing_decode_widget = QWidget()
+        self.writing_decode_widget.setLayout(self.writing_decode_layout)
+
         self.writing_widget = QWidget()
         self.writing_widget.setLayout(self.writing_layout)
 
@@ -290,6 +357,8 @@ please make sure you have created the file and set the right name.")
         self.stacked.addWidget(self.params_widget)
         self.stacked.addWidget(self.files_encode_widget)
         self.stacked.addWidget(self.files_decode_widget)
+        self.stacked.addWidget(self.writing_encode_widget)
+        self.stacked.addWidget(self.writing_decode_widget)
         self.stacked.setCurrentWidget(self.main_widget)
         # self.setCentralWidget(self.main_widget)
         # self.stacked.setCurrentWidget(self.main_widget)
@@ -379,6 +448,40 @@ please make sure you have created the file and set the right name."
         else:
             self.stacked.currentWidget().layout().itemAt(2).widget().setText("Декодированная последовательность: " +
                                                                              self.decoded_sequence)
+    
+    def change_widget_to_writing_encode(self):
+        self.stacked.setCurrentWidget(self.writing_encode_widget)
+        self.stacked.currentWidget().layout().itemAt(3).widget().setText("")
+        self.stacked.currentWidget().layout().itemAt(4).widget().setText("")
+      
+    def activate_writing_encode(self):
+        sequence = self.stacked.currentWidget().layout().itemAt(3).widget().text()
+        try:
+            self.encoded_sequence = make_encoded_string(self.encoded_words, self.file_input_encode_sequence, sequence)
+            self.stacked.currentWidget().layout().itemAt(4).widget().setText(self.encoded_sequence)
+        except FileNotFoundError:
+            content = f"There is no file {self.file_input_encode_sequence} in the static directory, please make sure \
+    you have created the file and set the right name."
+            self.stacked.currentWidget().layout().itemAt(4).widget().setText(content)
+        except ValueError as content:
+            self.stacked.currentWidget().layout().itemAt(4).widget().setText(content.args[0])
+
+    def change_widget_to_writing_decode(self):
+        self.stacked.setCurrentWidget(self.writing_decode_widget)
+        self.stacked.currentWidget().layout().itemAt(3).widget().setText("")
+        self.stacked.currentWidget().layout().itemAt(4).widget().setText("")
+
+    def activate_writing_decode(self):
+        sequence = self.stacked.currentWidget().layout().itemAt(3).widget().text()
+        try:
+            self.decoded_sequence = make_decoded_string(self.encoded_words, self.file_input_decode_sequence, sequence)
+            self.stacked.currentWidget().layout().itemAt(4).widget().setText(self.decoded_sequence)
+        except FileNotFoundError:
+            content = f"There is no file {self.file_input_decode_sequence} in the static directory, please make sure \
+    you have created the file and set the right name."
+            self.stacked.currentWidget().layout().itemAt(4).widget().setText(content)
+        except ValueError as content:
+            self.stacked.currentWidget().layout().itemAt(4).widget().setText(content.args[0])
 
 
 if __name__ == '__main__':
@@ -389,62 +492,62 @@ if __name__ == '__main__':
     window.show()
 
     app.exec()
-    loh = 1
-    if not loh:
-
-        try:
-            create_encoded_words(encoded_words, file_input_encode_probabilities)
-        except FileNotFoundError:
-            content = """There is no such file(s) in the static directory, please make sure you have created the file
-    and set the right name."""
-            print(content)
-            sys.exit()
-        except ValueError as content:
-            print(content)
-            sys.exit()
-
-        try:
-            encoded_sequence = make_encoded_string(encoded_words, file_input_encode_sequence)
-        except FileNotFoundError:
-            content = """There is no such file(s) in the static directory, please make sure you have created the file
-    and set the right name."""
-            print(content)
-            sys.exit()
-        except ValueError as content:
-            print(content)
-            sys.exit()
-        print(encoded_sequence)
-
-        print(encoded_words)
-
-        try:
-            write_encoded_string_in_file(encoded_sequence, file_output_encode_sequence)
-        except FileNotFoundError:
-            content = """There is no such file(s) in the static directory, please make sure you have created the file
-    and set the right name."""
-            print(content)
-            sys.exit()
-
-        parameters = get_parameters(encoded_words, file_input_encode_probabilities)
-        print(parameters)
-
-        # decoded_words = {word: letter for word, letter in encoded_words.items()}
-
-        try:
-            decoded_sequence = make_decoded_string(encoded_words, file_input_decode_sequence)
-        except FileNotFoundError:
-            content = "There is no such file(s) in the static directory, please make sure you have created the file \
-    and set the right name."
-            print(content)
-            sys.exit()
-        except ValueError as content:
-            print(content)
-            sys.exit()
-
-        try:
-            write_decoded_string_in_file(encoded_sequence, file_output_decode_sequence)
-        except FileNotFoundError:
-            content = """There is no such file(s) in the static directory, please make sure you have created the file
-        and set the right name."""
-            print(content)
-            sys.exit()
+    # GUI = 1
+    # if not GUI:
+    #
+    #     try:
+    #         create_encoded_words(encoded_words, file_input_encode_probabilities)
+    #     except FileNotFoundError:
+    #         content = """There is no such file(s) in the static directory, please make sure you have created the file
+    # and set the right name."""
+    #         print(content)
+    #         sys.exit()
+    #     except ValueError as content:
+    #         print(content)
+    #         sys.exit()
+    #
+    #     try:
+    #         encoded_sequence = make_encoded_string(encoded_words, file_input_encode_sequence)
+    #     except FileNotFoundError:
+    #         content = """There is no such file(s) in the static directory, please make sure you have created the file
+    # and set the right name."""
+    #         print(content)
+    #         sys.exit()
+    #     except ValueError as content:
+    #         print(content)
+    #         sys.exit()
+    #     print(encoded_sequence)
+    #
+    #     print(encoded_words)
+    #
+    #     try:
+    #         write_encoded_string_in_file(encoded_sequence, file_output_encode_sequence)
+    #     except FileNotFoundError:
+    #         content = """There is no such file(s) in the static directory, please make sure you have created the file
+    # and set the right name."""
+    #         print(content)
+    #         sys.exit()
+    #
+    #     parameters = get_parameters(encoded_words, file_input_encode_probabilities)
+    #     print(parameters)
+    #
+    #     # decoded_words = {word: letter for word, letter in encoded_words.items()}
+    #
+    #     try:
+    #         decoded_sequence = make_decoded_string(encoded_words, file_input_decode_sequence)
+    #     except FileNotFoundError:
+    #         content = "There is no such file(s) in the static directory, please make sure you have created the file \
+    # and set the right name."
+    #         print(content)
+    #         sys.exit()
+    #     except ValueError as content:
+    #         print(content)
+    #         sys.exit()
+    #
+    #     try:
+    #         write_decoded_string_in_file(encoded_sequence, file_output_decode_sequence)
+    #     except FileNotFoundError:
+    #         content = """There is no such file(s) in the static directory, please make sure you have created the file
+    #     and set the right name."""
+    #         print(content)
+    #         sys.exit()
