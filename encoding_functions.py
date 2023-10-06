@@ -3,6 +3,13 @@ from math import log2
 
 
 def create_encoded_words(encoded_words: dict, filename: str, raw_probabilities=None) -> None:
+    """
+    Функция создания кодовых слов для символов заданного алфавита по вероятностям встречи этих символов в алфавите
+    encoded words - словарь, ключами которого являются символы алфавита, а значениями до передачи в функцию -
+    пустые строки, а после выполнения функции - кодовые слова. Filename - имя файла, из которого производится
+    считывание вероятностей символов. Raw_probabilities - необязательный аргумент, список, при передаче значения
+    вероятностей берутся из переданного списка
+    """
     eps = 1e-10
     decimal.getcontext().prec = 10
     if not raw_probabilities:
@@ -31,7 +38,7 @@ Please, check it.")
     for i in range(len(probability)):
         haffman_algorithm_array[i] = [probability[i], [possible_letters[i]]]
     # print(haffman_algorithm_array)
-
+    # Свм алгоритм Хаффмана:
     while len(haffman_algorithm_array) > 1:
         haffman_algorithm_array.sort(key=lambda elem: elem[0], reverse=True)
 
@@ -48,6 +55,12 @@ Please, check it.")
 
 
 def make_encoded_string(encoded_words: dict, filename: str, raw_sequence=None) -> str:
+    """
+    Функция кодирования заданной строки из символов алфавита в строку из кодовых слов. Encoded_words - словарь
+    соответствия символов алфавита и кодовых слов. Filename - имя файла, из которого производится чтение заданной
+    последовательности. Raw_sequence - необязательный аргумент, строка, при передаче в функцию кодируется она,
+    а не строка из файла
+    """
     if raw_sequence == "":
         return ""
     if not raw_sequence:
@@ -64,17 +77,31 @@ Please, check it.")
 
 
 def write_encoded_string_in_file(encoded_string: str, filename: str) -> None:
+    """
+    Функция записи закодированной строки в файл
+    """
     with open(f'./static/{filename}', "w") as output_string_file:
         output_string_file.write(encoded_string)
 
 
 def get_parameters(encoded_words: dict, filename: str, raw_probabilities=None) -> list:
+    """
+    Функция получения параметров кодируемого алфавита. Возвращает список из трех элементов. Первый - средняя длина
+    кодового слова, второй - избыточность алфавита, третий - список из двух элементов: булевское значение - выполнение
+    неравенства Крафта и дробное число - левая часть этого неравенства. Encoded_words - словарь
+    соответствия символов алфавита и кодовых слов. Filename - имя файла, из которого производится чтение заданной
+    последовательности. Raw_probabilities - необязательный аргумент, список, при передаче значения
+    вероятностей берутся из переданного списка
+    """
     return [get_average_length_of_words(encoded_words, filename, raw_probabilities),
             get_redundancy(filename, raw_probabilities),  # filename is used in get_redundancy
             check_kraft_inequality(encoded_words)]
 
 
 def get_average_length_of_words(encoded_words: dict, filename: str, raw_probabilities=None) -> float:  # Подразумевается
+    """
+    Функция получения средней длины кодового слова алфавита
+    """
     if not raw_probabilities:
         with open(f'./static/{filename}') as input_probability_file:  # что filename имеет то же значение,
             line = input_probability_file.readline()  # что и filename в функции create_encoded_words.
@@ -90,6 +117,9 @@ def get_average_length_of_words(encoded_words: dict, filename: str, raw_probabil
 
 
 def get_redundancy(filename: str, raw_probabilities=None) -> float:  # Подразумевается, что filename имеет то же
+    """
+    Функция получения избыточности алфавита
+    """
     if not raw_probabilities:
         with open(f'./static/{filename}') as input_probability_file:  # значение что и filename в функции
             line = input_probability_file.readline()  # create_encoded_words. Также подразумевается, что
@@ -112,6 +142,9 @@ def get_redundancy(filename: str, raw_probabilities=None) -> float:  # Подр�
 
 
 def check_kraft_inequality(encoded_words: dict) -> list:
+    """
+    Функция проверки неравенства Крафта и нахождения его левой части
+    """
     decimal.getcontext().prec = 6
     left_part_of_kraft_inequality = 0
     left_part_of_kraft_inequality = decimal.Decimal(left_part_of_kraft_inequality)
