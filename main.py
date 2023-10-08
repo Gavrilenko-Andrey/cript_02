@@ -402,11 +402,11 @@ please make sure you have created the file and set the right name.")
         """
         if not error:
             self.parameters = get_parameters(self.encoded_words, self.file_input_encode_probabilities)
-            label_params_average_length = QLabel(f"Средняя длина кодовых слов равна {self.parameters[0]:.6f}")
+            label_params_average_length = QLineEdit(f"Средняя длина кодовых слов равна {self.parameters[0]:.6f}")
             font = label_params_average_length.font()
             font.setPixelSize(24)
             label_params_average_length.setFont(font)
-            label_params_redundancy = QLabel(f"Избыточность равна {self.parameters[1]:.6f}")
+            label_params_redundancy = QLineEdit(f"Избыточность равна {self.parameters[1]:.6f}")
             font = label_params_redundancy.font()
             font.setPixelSize(24)
             label_params_redundancy.setFont(font)
@@ -414,16 +414,21 @@ please make sure you have created the file and set the right name.")
                 check_kraft = "выполняется"
             else:
                 check_kraft = "не выполняется"
-            label_params_kraft_inequality = QLabel(f"Неравенство Крафта {check_kraft}. Левая часть равна \
+            label_params_kraft_inequality = QLineEdit(f"Неравенство Крафта {check_kraft}. Левая часть равна \
 {self.parameters[2][1]:.6f}")
             font = label_params_kraft_inequality.font()
             font.setPixelSize(24)
             label_params_kraft_inequality.setFont(font)
+            label_params_encoded_words = QLineEdit(f"Кодовые слова: {self.encoded_words}")
+            font = label_params_encoded_words.font()
+            font.setPixelSize(24)
+            label_params_encoded_words.setFont(font)
             self.params_layout.addWidget(button_return_main_from_parameters, 0, 0,
                                          alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
             self.params_layout.addWidget(label_params_average_length, 1, 10, 1, 100)
-            self.params_layout.addWidget(label_params_redundancy, 2, 10, 1, 100)
-            self.params_layout.addWidget(label_params_kraft_inequality, 3, 10, 1, 100)
+            self.params_layout.addWidget(label_params_redundancy, 2, 10, 2, 100)
+            self.params_layout.addWidget(label_params_kraft_inequality, 3, 10, 3, 100)
+            self.params_layout.addWidget(label_params_encoded_words, 4, 10, 4, 100)
             # print(self.parameters)
 
         self.params_widget.setLayout(self.params_layout)
@@ -462,7 +467,16 @@ please make sure you have created the file and set the right name.")
     def change_widget_to_params(self):
         # Функция вызывающая экран "Параметры"
         self.stacked.setCurrentWidget(self.params_widget)
-        # self.stacked.currentWidget().layout().itemAt(2).widget().setText("")
+        self.stacked.currentWidget().layout().itemAt(1).widget().setText(f"Средняя длина кодовых слов равна \
+{self.parameters[0]:.6f}")
+        self.stacked.currentWidget().layout().itemAt(2).widget().setText(f"Избыточность равна {self.parameters[1]:.6f}")
+        if self.parameters[2][0]:
+            check_kraft = "выполняется"
+        else:
+            check_kraft = "не выполняется"
+        self.stacked.currentWidget().layout().itemAt(3).widget().setText(f"Неравенство Крафта {check_kraft}. \
+Левая часть равна {self.parameters[2][1]:.6f}")
+        self.stacked.currentWidget().layout().itemAt(4).widget().setText(f"Кодовые слова: {self.encoded_words}")
 
     def change_widget_to_files_encode(self):
         # Функция вызывающая экран кодировки последовательности из файла и кодировку последовательности из файла
@@ -473,8 +487,8 @@ please make sure you have created the file and set the right name.")
         try:
             self.encoded_sequence = make_encoded_string(self.encoded_words, self.file_input_encode_sequence)
         except FileNotFoundError:
-            content = f"There is no file named {self.file_input_encode_sequence} in the static directory. \
-Please make sure you have created the file and set the right name."
+            content = f"В папке static не существует файла {self.file_input_encode_sequence}, пожалуйста, убедитесь \
+что вы создали файл и задали правильное имя."
             self.stacked.currentWidget().layout().itemAt(1).widget().setText(content)
             #print(content)
         except ValueError as content:
@@ -492,8 +506,8 @@ Please make sure you have created the file and set the right name."
         try:
             write_encoded_string_in_file(self.encoded_sequence, self.file_output_encode_sequence)
         except FileNotFoundError:
-            content = f"There is no file named {self.file_output_encode_sequence} in the static directory, \
-please make sure you have created the file and set the right name."
+            content = f"В папке static не существует файла {self.file_output_encode_sequence}, пожалуйста, убедитесь \
+что вы создали файл и задали правильное имя."
             self.stacked.currentWidget().layout().itemAt(2).widget().setText(content)
         else:
             self.stacked.currentWidget().layout().itemAt(2).widget().setText("Закодированная последовательность: " +
@@ -508,8 +522,8 @@ please make sure you have created the file and set the right name."
         try:
             self.decoded_sequence = make_decoded_string(self.encoded_words, self.file_input_decode_sequence)
         except FileNotFoundError:
-            content = f"There is no file named {self.file_input_decode_sequence} in the static directory. \
-Please make sure you have created the file and set the right name."
+            content = f"В папке static не существует файла {self.file_input_decode_sequence}, пожалуйста, убедитесь \
+что вы создали файл и задали правильное имя."
             self.stacked.currentWidget().layout().itemAt(1).widget().setText(content)
             # print(content)
         except ValueError as content:
@@ -527,8 +541,8 @@ Please make sure you have created the file and set the right name."
         try:
             write_decoded_string_in_file(self.decoded_sequence, self.file_output_decode_sequence)
         except FileNotFoundError:
-            content = f"There is no file named {self.file_output_decode_sequence} in the static directory, \
-please make sure you have created the file and set the right name."
+            content = f"В папке static не существует файла {self.file_output_decode_sequence}, пожалуйста, убедитесь \
+что вы создали файл и задали правильное имя."
             self.stacked.currentWidget().layout().itemAt(2).widget().setText(content)
         else:
             self.stacked.currentWidget().layout().itemAt(2).widget().setText("Декодированная последовательность: " +
@@ -547,8 +561,8 @@ please make sure you have created the file and set the right name."
             self.encoded_sequence = make_encoded_string(self.encoded_words, self.file_input_encode_sequence, sequence)
             self.stacked.currentWidget().layout().itemAt(4).widget().setText(self.encoded_sequence)
         except FileNotFoundError:
-            content = f"There is no file {self.file_input_encode_sequence} in the static directory, please make sure \
-    you have created the file and set the right name."
+            content = f"В папке static не существует файла {self.file_input_encode_sequence}, пожалуйста, убедитесь \
+что вы создали файл и задали правильное имя."
             self.stacked.currentWidget().layout().itemAt(4).widget().setText(content)
         except ValueError as content:
             self.stacked.currentWidget().layout().itemAt(4).widget().setText(content.args[0])
@@ -566,8 +580,8 @@ please make sure you have created the file and set the right name."
             self.decoded_sequence = make_decoded_string(self.encoded_words, self.file_input_decode_sequence, sequence)
             self.stacked.currentWidget().layout().itemAt(4).widget().setText(self.decoded_sequence)
         except FileNotFoundError:
-            content = f"There is no file {self.file_input_decode_sequence} in the static directory, please make sure \
-    you have created the file and set the right name."
+            content = f"В папке static не существует файла {self.file_input_decode_sequence}, пожалуйста, убедитесь \
+что вы создали файл и задали правильное имя."
             self.stacked.currentWidget().layout().itemAt(4).widget().setText(content)
         except ValueError as content:
             self.stacked.currentWidget().layout().itemAt(4).widget().setText(content.args[0])

@@ -19,18 +19,18 @@ def create_encoded_words(encoded_words: dict, filename: str, raw_probabilities=N
     else:
         probability = raw_probabilities
     if len(probability) != len(encoded_words):
-        raise ValueError("You set the wrong amount of probabilities in your file. Please, check it.")
+        raise ValueError("Вы установили неверное количество вероятностей. Пожалуйста, проверьте это")
     for i in range(len(probability)):
         try:
             probability[i] = decimal.Decimal(float(probability[i]))
         except ValueError:
-            raise ValueError(f"At least one of your probabilities ({i+1}th) is not a float number. \
-Please, check it.")
+            raise ValueError(f"Как минимум одна из вероятностей ({i+1}я) является не дробным числом, а символом. \
+Пожалуйста, проверьте это.")
         # print(probability[i])
         if probability[i] < 0:
-            raise ValueError("One of the probabilities was less than 0. Please, check it.")
+            raise ValueError("Одна из вероятностей оказалась мень 0. Пожалуйста, проверьте это.")
     if sum(probability) <= 1 - eps or sum(probability) >= 1 + eps:
-        raise ValueError("Sum of your probabilities is not equal to 1. Please, check it.")
+        raise ValueError("Сумма вероятностей не равна 1. Пожалуйста, проверьте это")
 
     possible_letters = list(encoded_words)
 
@@ -71,8 +71,8 @@ def make_encoded_string(encoded_words: dict, filename: str, raw_sequence=None) -
         sequence = raw_sequence
     for elem in sequence:
         if elem not in encoded_words:
-            raise ValueError("Your sequence consists of symbols that are not present in the alphabet. \
-Please, check it.")
+            raise ValueError("Ваша последовательность состоит из символов не представленных в алфавита. Пожалуйста, \
+проверьте это.")
     return sequence.translate(sequence.maketrans(encoded_words))
 
 

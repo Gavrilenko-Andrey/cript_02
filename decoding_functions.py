@@ -17,8 +17,8 @@ def make_decoded_string(encoded_words: dict, filename: str, raw_sequence=None) -
     else:
         encoded_sequence = raw_sequence
     if re.search('[^01]', encoded_sequence):
-        raise ValueError("There are unsupported symbols in your sequence, only supported symbols are 0 and 1. \
-Please, check it.")
+        raise ValueError("В вашей последовательности есть неподдерживаемые символы. Поддерживаемыми символами являются \
+0 и 1. Пожалуйста, проверьте это.")
     decoded_sequence = ""
     pointer = 0
     while pointer < len(encoded_sequence):
@@ -28,8 +28,8 @@ Please, check it.")
                 decoded_sequence += decoded_words[word]
                 break
         else:
-            raise ValueError("There are unsupported sequences in your file. Message can't be decoded with the given \
-alphabet. Please, check it.")
+            raise ValueError("В вашей последовательности есть неподдерживаемые подпоследовательности, которые не могут \
+быть декодированы с помощью текущего алфавита. Пожалуйста, проверьте это.")
 
     # decoded_sequence = encoded_sequence.translate(encoded_sequence.maketrans(decoded_words))
     # print(f'decoded sequence: {decoded_sequence}, decoded words:\n{decoded_words},\nencoded sequence:\
