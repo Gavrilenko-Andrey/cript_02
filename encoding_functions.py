@@ -28,7 +28,7 @@ def create_encoded_words(encoded_words: dict, filename: str, raw_probabilities=N
 Пожалуйста, проверьте это.")
         # print(probability[i])
         if probability[i] < 0:
-            raise ValueError("Одна из вероятностей оказалась мень 0. Пожалуйста, проверьте это.")
+            raise ValueError("Одна из вероятностей оказалась меньше 0. Пожалуйста, проверьте это.")
     if sum(probability) <= 1 - eps or sum(probability) >= 1 + eps:
         raise ValueError("Сумма вероятностей не равна 1. Пожалуйста, проверьте это")
 
@@ -71,7 +71,7 @@ def make_encoded_string(encoded_words: dict, filename: str, raw_sequence=None) -
         sequence = raw_sequence
     for elem in sequence:
         if elem not in encoded_words:
-            raise ValueError("Ваша последовательность состоит из символов не представленных в алфавита. Пожалуйста, \
+            raise ValueError("Ваша последовательность состоит из символов не представленных в алфавите. Пожалуйста, \
 проверьте это.")
     return sequence.translate(sequence.maketrans(encoded_words))
 

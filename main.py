@@ -38,8 +38,8 @@ class MainWindow(QMainWindow):
             create_encoded_words(self.encoded_words, self.file_input_encode_probabilities)
             # print(self.encoded_words)
         except FileNotFoundError:
-            label = QLabel(f"There is no file named {self.file_input_encode_probabilities} in the static directory, \
-please make sure you have created the file and set the right name.")
+            label = QLabel(f"В директории static нет файла с именем {self.file_input_encode_probabilities}, \
+Пожалуйста, проверьте что Вы создали файл и задали правильное имя.")
             #sys.exit()
         except ValueError as content:
             label = QLabel(content.args[0])
